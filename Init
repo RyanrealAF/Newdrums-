@@ -1,0 +1,92 @@
+import librosa
+import mido
+import numpy as np
+from mido import MidiFile, MidiTrack, Message, MetaMessage
+
+# ENTRY POINT: Path to your Suno track
+AUDIO_FILE = 'your_suno_track.wav'
+OUTPUT_MIDI = 'output.mid'
+BPM = 120  # Adjust to match your track for grid alignment
+
+def generate_midi(input_file, output_file, bpm):
+    # Load audio
+    print(f"Loading {input_file}...")
+    y, sr = librosa.load(input_file, sr=None)
+
+    # Harmonic-Percussive Source Separation (HPSS)
+    # This isolates percussive elements (drums) from melodic ones
+    y_harmonic, y_percussive = librosa.effects.hpss(y)
+
+    # Detect onset envelopes on percussive track for cleaner hits
+    onset_env = librosa.onset.onset_strength(y=y_percussive, sr=sr)
+    onset_frames = librosa.onset.onset_detect(onset_envelope=onset_env, sr=sr, backtrack=True)
+    onset_times = librosa.frames_to_time(onset_frames, sr=sr)
+
+    # Initialize MIDI
+    mid = MidiFile()
+    track = MidiTrack()
+    mid.tracks.append(track)
+
+    ticks_per_beat = 480
+    tempo = mido.bpm2tempo(bpm)
+    track.append(MetaMessage('set_tempo', tempo=tempo))
+
+    last_tick = 0
+    
+    print(f"Processing {len(onset_times)} onsets...")
+
+    for time in onset_times:
+        # Calculate absolute tick position
+        abs_tick = int(mido.second2tick(time, ticks_per_beat, tempo))
+        delta = abs_tick - last_tick
+        
+        if delta < 0: delta = 0 # Safety check
+        
+        # Note On (Note 36 is C1/Kick Drum)
+        track.append(Message('note_on', note=36, velocity=90, time=delta))
+        # Note Off (Fixed short duration for trigger-style visuals)
+        track.append(Message('note_off', note=36, velocity=0, time=10))
+        
+        # Update last_tick to account for the note_off duration
+        last_tick = abs_tick + 10
+
+    mid.save(output_file)
+    print(f"Successfully created: {output_file}")
+
+if __name__ == "__main__":
+    generate_midi(AUDIO_FILE, OUTPUT_MIDI, BPM)
+```
+
+---
+
+## Free Visual Software That Reads MIDI
+
+- **VVVV** (node-based visual programming)
+- **Processing** (code-based visuals, Java)
+- **Pure Data** + GEM (audio/visual patching)
+- **Sonic Pi** (live coding, can trigger visuals via OSC)
+
+All route to OBS via virtual camera/NDI.
+
+---
+
+## Fastest Free Solution
+
+**Resolume Avenue** has a free demo (watermarked but functional):
+1. Load Suno track
+2. Set audio reactivity on layers
+3. Capture to OBS via NDI plugin (free)
+
+Or just use **Shotcut** (free video editor) to sync visuals manually if performance isn't live.
+
+---
+
+## Your Actual Move
+
+Since budget is $0 and you're already in VS Code:
+
+1. Use Python script above to generate MIDI from Suno tracks.
+2. Use **VVVV** or **Processing** for visuals (both free, MIDI-reactive).
+3. Capture to OBS.
+
+Or skip all of it—use OBS audio-reactive filters on a browser source running **butterchurn**. Looks sick, costs nothing, works immediately.
