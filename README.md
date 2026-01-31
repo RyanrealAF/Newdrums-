@@ -25,12 +25,15 @@ pip install -r requirements.txt
 Run the conversion script on your audio track:
 
 ```bash
-python audio_to_midi.py your_track.wav --output output.mid --bpm 120
+python audio_to_midi.py your_track.wav --output output.mid --bpm 120 --dynamic
 ```
 
 *   `input`: Path to your audio file.
 *   `--output` or `-o`: Path to the resulting MIDI file (default: `output.mid`).
 *   `--bpm` or `-b`: BPM of the track to help with grid alignment (default: 120).
+*   `--note` or `-n`: MIDI note number to use (default: 36/Kick Drum).
+*   `--velocity` or `-v`: Fixed velocity or max velocity for dynamic mode (default: 90).
+*   `--dynamic`: Enable dynamic velocity scaling based on onset strength.
 
 ---
 
