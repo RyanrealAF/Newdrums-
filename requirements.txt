@@ -1,0 +1,4 @@
+librosa
+mido
+numpy
+scipy
