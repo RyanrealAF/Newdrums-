@@ -1,0 +1,21 @@
+﻿Free Audio-to-MIDI Conversion for Visual Sync
+The Free Stack
+Audio Analysis: Python + librosa (free, open-source)
+MIDI Creation: mido library (free)
+Virtual MIDI: loopMIDI (Windows) / IAC Driver (Mac, built-in)
+Visual Software: OBS Studio + audio-reactive plugins (free)
+Skip MIDI Conversion—Go Audio-Reactive
+Why: Audio-reactive is easier, more reliable, and costs nothing.
+Setup (5 minutes):
+1. OBS Studio → Add audio source (Suno track)
+2. Add Filter → "Audio Monitor" (routes to virtual audio cable)
+3. Install VB-Audio Cable (free virtual audio device)
+4. Add Browser Source in OBS
+5. Use free audio visualizer:
+   * butterchurn (Winamp visualizer, web version)
+   * Sonic Visualiser
+   * projectM (Milkdrop fork)
+Point browser source at visualizer URL. It reacts to audio frequencies automatically—no MIDI needed.
+If You Actually Need MIDI (Python Method)
+Install:
+pip install librosa mido numpy
